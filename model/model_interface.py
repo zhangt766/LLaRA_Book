@@ -34,24 +34,24 @@ from peft import (
 )
 from transformers import AutoModelForCausalLM, LlamaForCausalLM
 
-score_instruct = """You are a system that recommends music based on a user's listening history. Please evaluate the similarity between each listening history in the candidate list and the single target listening history. Rate the similarity on a scale from 1 to 10, where 1 is not similar at all and 10 is very similar.\n
+score_instruct = """You are a system that recommends books based on reading history. Please evaluate the similarity between each reading history in the candidate list and the single target reading history. Rate the similarity on a scale from 1 to 10, where 1 is not similar at all and 10 is very similar.
 Please output the similarity ratings in JSON format. Here is the format:
-["Listen History 1": score, "Listen History 2": score, "Listen History 3": score, "Listen History 4": score, "Listen History 5": score, "Listen History 6": score, "Listen History 7": score, "Listen History 8": score, "Listen History 9": score, "Listen History 10": score]\n"""
+["Reading History 1": score, "Reading History 2": score, "Reading History 3": score, "Reading History 4": score, "Reading History 5": score, "Reading History 6": score, "Reading History 7": score, "Reading History 8": score, "Reading History 9": score, "Reading History 10": score]\n"""
 
-score_history = """Candidate Listen History:
-{MUSIC_LISTS} \n
-Target Listening History:
-{TARGET_MUSIC} \n
+score_history = """Candidate Reading History:
+{BOOK_LISTS} \n
+Target Reading History:
+{TARGET_BOOK} \n
 Please output the similarity ratings in JSON format. The output should only contain the JSON object with similarity scores, without any additional text. Output:"""
 
-reco_instruct = """You are a music recommendation system. Below are some similar users' listening histories and the next artist they are likely to choose. Based on the current user's listen history, your task is to recommend the next artist for this user. Instructions:1. Recommend one artist's name. 2. It **must** be from the candidate pool only.
+reco_instruct = """You are a book recommendation system. Below are some similar users' reading histories and the next book they are likely to choose. Based on the current user's reading history, your task is to recommend the next book for this user.Instructions:1. Recommend one book title. 2. It **must** be from the candidate pool only.
 Please output the recommendation in the format below:
-['Recommendation': artist_name] \n
+['Recommendation': book_name] \n
 """
 
-reco_prompt_history = """Similar user {i}: He/She has listened to {SimilarHistory}. Based on this, He/She will likely choose {SimilarChoice} to listen next. \n"""
+reco_prompt_history = """Similar user {i}: He/She has read {SimilarHistory}. Based on this, He/She will likely choose {SimilarChoice} to read next. \n"""
 
-reco_prompt_instruct = """The listening history of this user is: {HistoryHere}. Recommend one artist from the following set of names: {CansHere}. Output:"""
+reco_prompt_instruct = """The reading history of this user is: {HistoryHere}. Recommend one book from the following set of titles: {CansHere}. Output:"""
 
 TERMINATOR = "\n"
 
@@ -97,7 +97,7 @@ class MInterface(pl.LightningModule):
         target_movie = " ".join(input["seq_name"][:input["len_seq"]])
         # print(movie_lists)
         input_prompt = score_instruct + score_history.format_map(
-            {"MUSIC_LISTS": movie_lists, "TARGET_MUSIC": target_movie})
+            {"BOOK_LISTS": movie_lists, "TARGET_BOOK": target_movie})
         # with open("/mnt/bn/data-tns-live-llm/leon/LLaRA-similar_seq_as_demo-/tmp.txt","a") as f:
         #     f.write(input_prompt)
         input = self.llama_tokenizer(input_prompt, return_tensors="pt")
@@ -108,11 +108,11 @@ class MInterface(pl.LightningModule):
             output = json.loads("{" + org_output.split("Output:")[1].split("{")[1].split("}")[0] + "}")
             sorted_items = sorted(output.items(), key=lambda item: item[1], reverse=True)
             # 获取分数最高的前5个键
-            top_5_idx = [int(re.findall(r'\d+', item[0])[0]) - 1 for item in sorted_items[:5]]
+            top_5_idx = [int(re.findall(r'\d+', item[0])[0]) - 1 for item in sorted_items[:7]]
             return top_5_idx
         except:
             print("bad format, cant decode")
-        return random.sample(range(10), 5)
+        return random.sample(range(10), 7)
 
     # tokenize
     def format_fn(self, input):
@@ -121,8 +121,8 @@ class MInterface(pl.LightningModule):
             similar_historys = [input["most_similar_seq_name"][idx] for idx in top_5_idx]
             similar_choices = [input["most_similar_seq_next_name"][idx] for idx in top_5_idx]
         else:
-            similar_historys = input["most_similar_seq_name"][:5]
-            similar_choices = input["most_similar_seq_next_name"][:5]
+            similar_historys = input["most_similar_seq_name"][:7]
+            similar_choices = input["most_similar_seq_next_name"][:7]
 
         demos = [
             reco_prompt_history.format_map({"i": i, "SimilarHistory": similar_history, "SimilarChoice": similar_choice})
