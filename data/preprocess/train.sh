@@ -6,9 +6,9 @@ echo "This is a shell script"
 
 # Set the paths for your data and model
 MODEL_PATH="/workspace/Llama-2-7b-hf"
-DATA_PATH="/workspace/LLaRA/data/ref/lastfm/train_data.df"
-ITEM_FILE="/workspace/LLaRA/data/ref/lastfm/id2name.txt"
-OUTPUT_PATH="/workspace/LLaRA/data/ref/lastfm/similar_train_data.df"
+DATA_PATH="/workspace/LLaRA/data/ref/steam/train_data.df"
+ITEM_FILE="/workspace/LLaRA/data/ref/steam/id2name.txt"
+OUTPUT_PATH="/workspace/LLaRA/data/ref/steam/similar_train_data.df"
 
 # Run the Python script
 python find_similar.py \

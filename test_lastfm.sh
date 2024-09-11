@@ -3,7 +3,7 @@ CUDA_VISIBLE_DEVICES=0 python3 main.py \
 --batch_size 4 \
 --accumulate_grad_batches 32 \
 --dataset movielens_data \
---data_dir data/ref/movielens \
+--data_dir data/ref/lastfm \
 --cans_num 20 \
 --prompt_path ./prompt/artist.txt \
 --rec_embed SASRec \

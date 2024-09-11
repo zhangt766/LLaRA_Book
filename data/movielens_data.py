@@ -9,14 +9,14 @@ import random
 
 
 class MovielensData(data.Dataset):
-    def __init__(self, data_dir=r'data/ref/movielens',
+    def __init__(self, data_dir=r'data/ref/lastfm',
                  stage=None,
                  cans_num=10,
                  sep=", ",
                  no_augment=True):
         self.__dict__.update(locals())
         self.aug = (stage == 'train') and not no_augment
-        self.padding_item_id = 4606
+        self.padding_item_id = 1500
         self.padding_rating = 0
         self.check_files()
 
