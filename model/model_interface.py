@@ -112,7 +112,7 @@ class MInterface(pl.LightningModule):
             return top_5_idx
         except:
             print("bad format, cant decode")
-        return random.sample(range(10), 7)
+        return random.sample(range(10), 5)
 
     # tokenize
     def format_fn(self, input):
@@ -121,8 +121,8 @@ class MInterface(pl.LightningModule):
             similar_historys = [input["most_similar_seq_name"][idx] for idx in top_5_idx]
             similar_choices = [input["most_similar_seq_next_name"][idx] for idx in top_5_idx]
         else:
-            similar_historys = input["most_similar_seq_name"][:7]
-            similar_choices = input["most_similar_seq_next_name"][:7]
+            similar_historys = input["most_similar_seq_name"][:5]
+            similar_choices = input["most_similar_seq_next_name"][:5]
 
         demos = [
             reco_prompt_history.format_map({"i": i, "SimilarHistory": similar_history, "SimilarChoice": similar_choice})

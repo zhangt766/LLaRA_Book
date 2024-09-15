@@ -141,10 +141,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     if 'movielens' in args.data_dir:
-        args.padding_item_id = 1500
+        args.padding_item_id = 2359
     elif 'steam' in args.data_dir:
         args.padding_item_id = 3581
     elif 'lastfm' in args.data_dir:
-        args.padding_item_id = 1500
+        args.padding_item_id = 2359
 
     main(args)

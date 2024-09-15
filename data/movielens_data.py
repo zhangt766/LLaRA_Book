@@ -16,7 +16,7 @@ class MovielensData(data.Dataset):
                  no_augment=True):
         self.__dict__.update(locals())
         self.aug = (stage == 'train') and not no_augment
-        self.padding_item_id = 1500
+        self.padding_item_id = 2359
         self.padding_rating = 0
         self.check_files()
 
